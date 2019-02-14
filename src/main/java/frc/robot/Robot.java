@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 
     private Timer timer = new Timer();
 
+    //Drive code for autonomous and teleoperated
     private void teleopDrive() {
         controlSolenoid(panelAdjustSolenoid, RobotMap.SOLENOID_PANEL_FORWARD_BUTTON, RobotMap.SOLENOID_PANEL_REVERSE_BUTTON);
         controlSolenoid(panelPushSolenoid, RobotMap.SOLENOID_PANEL_PUSH_BUTTON, RobotMap.SOLENOID_PANEL_UNPUSH_BUTTON);
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
         Timer.delay(0.005);
     }
 
+    //Control all solenoid buttons
     private void controlSolenoid(DoubleSolenoid doubleSolenoid, int forwardButton, int reverseButton) {
         if (joystick.getRawButton(forwardButton) && joystick.getRawButton(reverseButton)) {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
