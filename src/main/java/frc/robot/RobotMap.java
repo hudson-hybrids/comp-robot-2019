@@ -21,11 +21,5 @@ public class RobotMap {
     public static final int SOLENOID_CARGO_LOWER_ID = 5;
 
     public static final int JOYSTICK_ID = 0;
-    public static final int SOLENOID_PANEL_FORWARD_BUTTON = 5;
-    public static final int SOLENOID_PANEL_REVERSE_BUTTON = 3;
-    public static final int SOLENOID_PANEL_PUSH_BUTTON = 6;
-    public static final int SOLENOID_PANEL_UNPUSH_BUTTON = 4;
-    public static final int SOLENOID_CARGO_RAISE_BUTTON = 8;
-    public static final int SOLENOID_CARGO_LOWER_BUTTON = 7;
-    public static final int MOTOR_SLOW_BUTTON = 2;
+    public static final int GAMEPAD_ID = 1;
 }
