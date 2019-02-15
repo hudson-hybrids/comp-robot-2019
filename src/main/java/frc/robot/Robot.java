@@ -67,8 +67,8 @@ public class Robot extends TimedRobot {
                 speedMultiplier2 = 0.4;
             }
 
-            speed1 = controller.MOTOR_RIGHT_AXIS * speedMultiplier1;
-            speed2 = controller.MOTOR_LEFT_AXIS * speedMultiplier2;
+            speed1 = -controller.MOTOR_RIGHT_AXIS * speedMultiplier1;
+            speed2 = -controller.MOTOR_LEFT_AXIS * speedMultiplier2;
         }
         //Joystick
         else {
