@@ -8,12 +8,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import frc.robot.Controller;
 
 public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
     final int MOTOR_SLOW_BUTTON;
+
+    private boolean canDrive = false;
+    private boolean canControlSolenoids = false;
 
     private double xSpeed;
     private double zRotation;
@@ -62,8 +66,22 @@ public class ArcadeDriveController extends Controller {
         zRotation = getX() * zRotationMultiplier;
     }
 
-    void drive(DifferentialDrive drive) {
-        setSpeed();
-        drive.arcadeDrive(xSpeed, zRotation);
+    void setCanDrive(boolean canDrive) {
+        this.canDrive = canDrive;
+    }
+    void setCanControlSolenoids(boolean canControlSolenoids) {
+        this.canControlSolenoids = canControlSolenoids;
+    }
+
+    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
+        if (canControlSolenoids) {
+            controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);
+            controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);
+            controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
+        }
+        if (canDrive) {
+            setSpeed();
+            drive.arcadeDrive(xSpeed, zRotation);
+        }
     }
 }

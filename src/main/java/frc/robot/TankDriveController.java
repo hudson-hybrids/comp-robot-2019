@@ -8,16 +8,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import frc.robot.Controller;
 
 public class TankDriveController extends Controller {
-    final int MOTOR_RIGHT_AXIS;
-    final int MOTOR_LEFT_AXIS;
-    final int MOTOR_RIGHT_SPEED_AXIS;
-    final int MOTOR_LEFT_SPEED_AXIS;
-    final int MOTOR_RIGHT_SLOW_BUTTON;
-    final int MOTOR_LEFT_SLOW_BUTTON;
+    final int RIGHT_STICK_AXIS;
+    final int LEFT_STICK_AXIS;
+    final int RIGHT_TRIGGER_AXIS;
+    final int LEFT_TRIGGER_AXIS;
+    final int RIGHT_SHOULDER_BUTTON;
+    final int LEFT_SHOULDER_BUTTON;
+
+    private boolean canDrive = false;
+    private boolean canControlSolenoids = false;
 
     double rightSpeed;
     double leftSpeed;
@@ -30,12 +34,12 @@ public class TankDriveController extends Controller {
         final int SOLENOID_PANEL_UNPUSH_BUTTON,
         final int SOLENOID_CARGO_RAISE_BUTTON,
         final int SOLENOID_CARGO_LOWER_BUTTON,
-        final int MOTOR_RIGHT_AXIS,
-        final int MOTOR_LEFT_AXIS,
-        final int MOTOR_RIGHT_SPEED_AXIS,
-        final int MOTOR_LEFT_SPEED_AXIS,
-        final int MOTOR_RIGHT_SLOW_BUTTON,
-        final int MOTOR_LEFT_SLOW_BUTTON) {
+        final int RIGHT_STICK_AXIS,
+        final int LEFT_STICK_AXIS,
+        final int RIGHT_TRIGGER_AXIS,
+        final int LEFT_TRIGGER_AXIS,
+        final int RIGHT_SHOULDER_BUTTON,
+        final int LEFT_SHOULDER_BUTTON) {
 
         super(
             ID, 
@@ -45,38 +49,68 @@ public class TankDriveController extends Controller {
             SOLENOID_PANEL_UNPUSH_BUTTON,
             SOLENOID_CARGO_RAISE_BUTTON,
             SOLENOID_CARGO_LOWER_BUTTON);
-        this.MOTOR_RIGHT_AXIS = MOTOR_RIGHT_AXIS;
-        this.MOTOR_LEFT_AXIS = MOTOR_LEFT_AXIS;
-        this.MOTOR_RIGHT_SPEED_AXIS = MOTOR_RIGHT_SPEED_AXIS;
-        this.MOTOR_LEFT_SPEED_AXIS = MOTOR_LEFT_SPEED_AXIS;
-        this.MOTOR_RIGHT_SLOW_BUTTON = MOTOR_RIGHT_SLOW_BUTTON;
-        this.MOTOR_LEFT_SLOW_BUTTON = MOTOR_LEFT_SLOW_BUTTON;
+        this.RIGHT_STICK_AXIS = RIGHT_STICK_AXIS;
+        this.LEFT_STICK_AXIS = LEFT_STICK_AXIS;
+        this.RIGHT_TRIGGER_AXIS = RIGHT_TRIGGER_AXIS;
+        this.LEFT_TRIGGER_AXIS = LEFT_TRIGGER_AXIS;
+        this.RIGHT_SHOULDER_BUTTON = RIGHT_SHOULDER_BUTTON;
+        this.LEFT_SHOULDER_BUTTON = LEFT_SHOULDER_BUTTON;
     }
 
     private void setSpeed() {
         double rightSpeedMultiplier = 0.6;
         double leftSpeedMultiplier = 0.6;
 
-        if (getRawAxis(MOTOR_RIGHT_SPEED_AXIS) > 0.3 && !getRawButton(MOTOR_RIGHT_SLOW_BUTTON)) {
+        if (getRawAxis(RIGHT_TRIGGER_AXIS) > 0.3 && !getRawButton(RIGHT_SHOULDER_BUTTON)) {
             rightSpeedMultiplier = 1.0;
         }
-        else if (getRawAxis(MOTOR_RIGHT_SPEED_AXIS) <= 0.3 && getRawButton(MOTOR_RIGHT_SLOW_BUTTON)) {
+        else if (getRawAxis(RIGHT_TRIGGER_AXIS) <= 0.3 && getRawButton(RIGHT_SHOULDER_BUTTON)) {
             rightSpeedMultiplier = 0.4;
         }
 
-        if (getRawAxis(MOTOR_LEFT_SPEED_AXIS) > 0.3 && !getRawButton(MOTOR_LEFT_SLOW_BUTTON)) {
+        if (getRawAxis(LEFT_TRIGGER_AXIS) > 0.3 && !getRawButton(LEFT_SHOULDER_BUTTON)) {
             leftSpeedMultiplier = 1.0;
         }
-        else if (getRawAxis(MOTOR_LEFT_SPEED_AXIS) <= 0.3 && getRawButton(MOTOR_LEFT_SLOW_BUTTON)) {
+        else if (getRawAxis(LEFT_TRIGGER_AXIS) <= 0.3 && getRawButton(LEFT_SHOULDER_BUTTON)) {
             leftSpeedMultiplier = 0.4;
         }
 
-        rightSpeed = -MOTOR_RIGHT_AXIS * rightSpeedMultiplier;
-        leftSpeed = -MOTOR_LEFT_AXIS * leftSpeedMultiplier;
+        rightSpeed = -getRawAxis(RIGHT_STICK_AXIS) * rightSpeedMultiplier;
+        leftSpeed = -getRawAxis(LEFT_STICK_AXIS) * leftSpeedMultiplier;
     }
 
-    void drive(DifferentialDrive drive) {
-        setSpeed();
-        drive.tankDrive(leftSpeed, rightSpeed);
+    private void controlSolenoidAnalog(DoubleSolenoid doubleSolenoid, int stickAxis) {
+        if (-getRawAxis(stickAxis) >= 0.3) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
+        else if (-getRawAxis(stickAxis) <= -0.3) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+        }
+        else {
+            doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+        }
+    }
+
+    void setCanDrive(boolean canDrive) {
+        this.canDrive = canDrive;
+    }
+    void setCanControlSolenoids(boolean canControlSolenoids) {
+        this.canControlSolenoids = canControlSolenoids;
+    }
+
+    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
+        if (canDrive) {
+            if (canControlSolenoids) {
+                controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);
+                controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);
+                controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
+            }
+            setSpeed();
+            drive.tankDrive(leftSpeed, rightSpeed);
+        }
+        else if (canControlSolenoids) {
+            controlSolenoidAnalog(panelAdjustSolenoid, LEFT_STICK_AXIS);
+            controlSolenoidAnalog(panelPushSolenoid, RIGHT_STICK_AXIS);
+        }
     }
 }

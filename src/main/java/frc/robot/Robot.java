@@ -27,8 +27,8 @@ public class Robot extends TimedRobot {
     private String currentAutoMode;
     private final SendableChooser<String> AUTO_MODE_CHOOSER = new SendableChooser<>();
 	private static final String AUTO_MODE_TELEOP = "AUTO_MODE_TELEOP";
-	private static final String AUTO_MODE_1 = "AUTO_MODE_1";
-    //sadflkjasdf;kjasdfffffffffffslfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffasdfasdfasdf
+    private static final String AUTO_MODE_1 = "AUTO_MODE_1";
+    
     private WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(RobotMap.FRONT_RIGHT_MOTOR_ID);
     private WPI_VictorSPX backRightMotor = new WPI_VictorSPX(RobotMap.BACK_RIGHT_MOTOR_ID);
     private WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_MOTOR_ID);
@@ -41,23 +41,15 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
     private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2);
-    //private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8, 5, 1, 3, 2, 6, 5);
-    private Controller pneumaticsGamepad = new Controller(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8);
+    private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8, 5, 1, 3, 2, 6, 5);
     private DifferentialDrive drive = new DifferentialDrive(leftGroup, rightGroup);
 
     private Timer timer = new Timer();
 
     //Drive code for autonomous and teleoperated
     private void teleopDrive() {
-        joystick.controlSolenoidDigital(panelAdjustSolenoid, joystick.SOLENOID_PANEL_FORWARD_BUTTON, joystick.SOLENOID_PANEL_REVERSE_BUTTON);
-        joystick.controlSolenoidDigital(panelPushSolenoid, joystick.SOLENOID_PANEL_PUSH_BUTTON, joystick.SOLENOID_PANEL_UNPUSH_BUTTON);
-        joystick.controlSolenoidDigital(cargoSolenoid, joystick.SOLENOID_CARGO_RAISE_BUTTON, joystick.SOLENOID_CARGO_LOWER_BUTTON);
-
-        pneumaticsGamepad.controlSolenoidDigital(panelAdjustSolenoid, pneumaticsGamepad.SOLENOID_PANEL_FORWARD_BUTTON, pneumaticsGamepad.SOLENOID_PANEL_REVERSE_BUTTON);
-        pneumaticsGamepad.controlSolenoidDigital(panelPushSolenoid, pneumaticsGamepad.SOLENOID_PANEL_PUSH_BUTTON, pneumaticsGamepad.SOLENOID_PANEL_UNPUSH_BUTTON);
-        pneumaticsGamepad.controlSolenoidDigital(cargoSolenoid, pneumaticsGamepad.SOLENOID_CARGO_RAISE_BUTTON, pneumaticsGamepad.SOLENOID_CARGO_LOWER_BUTTON);
-
-        joystick.drive(drive);
+        gamepad.drive(drive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
+        joystick.drive(drive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
 
         Timer.delay(0.005);
     }
@@ -72,6 +64,8 @@ public class Robot extends TimedRobot {
         
         CameraServer.getInstance().startAutomaticCapture();
 
+        joystick.setCanDrive(true);
+        gamepad.setCanControlSolenoids(true);
         drive.setSafetyEnabled(true);
 	}
 	
