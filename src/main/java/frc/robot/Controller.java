@@ -36,17 +36,17 @@ public class Controller extends Joystick {
         this.SOLENOID_CARGO_LOWER_BUTTON = SOLENOID_CARGO_LOWER_BUTTON;
     }
 
-    void controlSolenoid(DoubleSolenoid doubleSolenoid, int forwardButton, int reverseButton) {
-        if (getRawButton(forwardButton) && getRawButton(reverseButton)) {
+    void controlSolenoidDigital(DoubleSolenoid doubleSolenoid, int forwardControl, int reverseControl) {
+        if (getRawButton(forwardControl) && getRawButton(reverseControl)) {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
         }
-        else if (getRawButton(forwardButton)) {
+        else if (getRawButton(forwardControl)) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
         }
-        else if (getRawButton(reverseButton)) {
+        else if (getRawButton(reverseControl)) {
             doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
         }
-        if (getRawButtonReleased(forwardButton) || getRawButtonReleased(reverseButton)) {
+        if (getRawButtonReleased(forwardControl) || getRawButtonReleased(reverseControl)) {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
         }
     }

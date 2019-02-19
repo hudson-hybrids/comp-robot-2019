@@ -40,22 +40,22 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid panelAdjustSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_FORWARD_ID, RobotMap.SOLENOID_PANEL_REVERSE_ID);
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
-    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 5, 3, 6, 4, 8, 7, 1, 2);
-    private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 4, 3, 2, 1, 8, 7, 5, 1, 3, 2, 6, 5);
-    private Controller pneumaticsGamepad = new Controller(RobotMap.GAMEPAD_ID, 4, 3, 2, 1, 8, 7);
+    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2);
+    //private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8, 5, 1, 3, 2, 6, 5);
+    private Controller pneumaticsGamepad = new Controller(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8);
     private DifferentialDrive drive = new DifferentialDrive(leftGroup, rightGroup);
 
     private Timer timer = new Timer();
 
     //Drive code for autonomous and teleoperated
     private void teleopDrive() {
-        joystick.controlSolenoid(panelAdjustSolenoid, joystick.SOLENOID_PANEL_FORWARD_BUTTON, joystick.SOLENOID_PANEL_REVERSE_BUTTON);
-        joystick.controlSolenoid(panelPushSolenoid, joystick.SOLENOID_PANEL_PUSH_BUTTON, joystick.SOLENOID_PANEL_UNPUSH_BUTTON);
-        joystick.controlSolenoid(cargoSolenoid, joystick.SOLENOID_CARGO_RAISE_BUTTON, joystick.SOLENOID_CARGO_LOWER_BUTTON);
+        joystick.controlSolenoidDigital(panelAdjustSolenoid, joystick.SOLENOID_PANEL_FORWARD_BUTTON, joystick.SOLENOID_PANEL_REVERSE_BUTTON);
+        joystick.controlSolenoidDigital(panelPushSolenoid, joystick.SOLENOID_PANEL_PUSH_BUTTON, joystick.SOLENOID_PANEL_UNPUSH_BUTTON);
+        joystick.controlSolenoidDigital(cargoSolenoid, joystick.SOLENOID_CARGO_RAISE_BUTTON, joystick.SOLENOID_CARGO_LOWER_BUTTON);
 
-        pneumaticsGamepad.controlSolenoid(panelAdjustSolenoid, gamepad.SOLENOID_PANEL_FORWARD_BUTTON, gamepad.SOLENOID_PANEL_REVERSE_BUTTON);
-        pneumaticsGamepad.controlSolenoid(panelPushSolenoid, gamepad.SOLENOID_PANEL_PUSH_BUTTON, gamepad.SOLENOID_PANEL_UNPUSH_BUTTON);
-        pneumaticsGamepad.controlSolenoid(cargoSolenoid, gamepad.SOLENOID_CARGO_RAISE_BUTTON, gamepad.SOLENOID_CARGO_LOWER_BUTTON);
+        pneumaticsGamepad.controlSolenoidDigital(panelAdjustSolenoid, pneumaticsGamepad.SOLENOID_PANEL_FORWARD_BUTTON, pneumaticsGamepad.SOLENOID_PANEL_REVERSE_BUTTON);
+        pneumaticsGamepad.controlSolenoidDigital(panelPushSolenoid, pneumaticsGamepad.SOLENOID_PANEL_PUSH_BUTTON, pneumaticsGamepad.SOLENOID_PANEL_UNPUSH_BUTTON);
+        pneumaticsGamepad.controlSolenoidDigital(cargoSolenoid, pneumaticsGamepad.SOLENOID_CARGO_RAISE_BUTTON, pneumaticsGamepad.SOLENOID_CARGO_LOWER_BUTTON);
 
         joystick.drive(drive);
 
