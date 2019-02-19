@@ -75,15 +75,15 @@ public class TankDriveController extends Controller {
             leftSpeedMultiplier = 0.4;
         }
 
-        rightSpeed = -getRawAxis(RIGHT_STICK_AXIS) * rightSpeedMultiplier;
-        leftSpeed = -getRawAxis(LEFT_STICK_AXIS) * leftSpeedMultiplier;
+        rightSpeed = getRawAxis(RIGHT_STICK_AXIS) * rightSpeedMultiplier;
+        leftSpeed = getRawAxis(LEFT_STICK_AXIS) * leftSpeedMultiplier;
     }
 
     private void controlSolenoidAnalog(DoubleSolenoid doubleSolenoid, int stickAxis) {
-        if (-getRawAxis(stickAxis) >= 0.3) {
+        if (getRawAxis(stickAxis) >= 0.3) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
         }
-        else if (-getRawAxis(stickAxis) <= -0.3) {
+        else if (getRawAxis(stickAxis) <= -0.3) {
             doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
         }
         else {
@@ -106,7 +106,7 @@ public class TankDriveController extends Controller {
                 controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
             }
             setSpeed();
-            drive.tankDrive(leftSpeed, rightSpeed);
+            drive.tankDrive(rightSpeed, leftSpeed);
         }
         else if (canControlSolenoids) {
             controlSolenoidAnalog(panelAdjustSolenoid, LEFT_STICK_AXIS);

@@ -62,7 +62,7 @@ public class ArcadeDriveController extends Controller {
             zRotationMultiplier = 0.48;
         }
 
-        xSpeed = -getY() * xSpeedMultiplier;
+        xSpeed = getY() * xSpeedMultiplier;
         zRotation = getX() * zRotationMultiplier;
     }
 

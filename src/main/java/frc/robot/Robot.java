@@ -42,14 +42,14 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
     private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2);
     private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 3, 4, 1, 2, 7, 8, 5, 1, 3, 2, 6, 5);
-    private DifferentialDrive drive = new DifferentialDrive(leftGroup, rightGroup);
+    private DifferentialDrive differentialDrive = new DifferentialDrive(leftGroup, rightGroup);
 
     private Timer timer = new Timer();
 
     //Drive code for autonomous and teleoperated
     private void teleopDrive() {
-        gamepad.drive(drive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
-        joystick.drive(drive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
+        gamepad.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
+        joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
 
         Timer.delay(0.005);
     }
@@ -64,9 +64,11 @@ public class Robot extends TimedRobot {
         
         CameraServer.getInstance().startAutomaticCapture();
 
-        joystick.setCanDrive(true);
+        //joystick.setCanDrive(true);
+        gamepad.setCanDrive(true);
+        //joystick.setCanControlSolenoids(true);
         gamepad.setCanControlSolenoids(true);
-        drive.setSafetyEnabled(true);
+        differentialDrive.setSafetyEnabled(true);
 	}
 	
 	//Runs each cycle
