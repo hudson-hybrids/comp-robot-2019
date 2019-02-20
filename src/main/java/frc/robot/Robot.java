@@ -63,10 +63,10 @@ public class Robot extends TimedRobot {
         
         CameraServer.getInstance().startAutomaticCapture();
 
-        joystick.setCanDrive(true);
-        //gamepad.setCanDrive(true);
-        joystick.setCanControlSolenoids(true);
-        //gamepad.setCanControlSolenoids(true);
+        //joystick.setCanDrive(true);
+        gamepad.setCanDrive(true);
+        //joystick.setCanControlSolenoids(true);
+        gamepad.setCanControlSolenoids(true);
         differentialDrive.setSafetyEnabled(true);
 	}
 	
