@@ -90,6 +90,19 @@ public class TankDriveController extends Controller {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
         }
     }
+    private void controlSolenoidPOV(DoubleSolenoid doubleSolenoid) {
+        final int POV_UP = 1;
+        final int POV_DOWN = 2;
+        if (getPOV() == POV_UP) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
+        else if (getPOV() == POV_DOWN) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
+        else {
+            doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+        }
+    }
 
     void setCanDrive(boolean canDrive) {
         this.canDrive = canDrive;
@@ -111,6 +124,7 @@ public class TankDriveController extends Controller {
         else if (canControlSolenoids) {
             controlSolenoidAnalog(panelAdjustSolenoid, LEFT_STICK_AXIS);
             controlSolenoidAnalog(panelPushSolenoid, RIGHT_STICK_AXIS);
+            controlSolenoidPOV(cargoSolenoid);
         }
     }
 }
