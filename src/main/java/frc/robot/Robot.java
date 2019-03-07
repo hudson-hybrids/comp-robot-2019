@@ -60,11 +60,10 @@ public class Robot extends TimedRobot {
 		AUTO_MODE_CHOOSER.setDefaultOption(AUTO_MODE_TELEOP, AUTO_MODE_TELEOP);
 		AUTO_MODE_CHOOSER.addOption(AUTO_MODE_1, AUTO_MODE_1);
         SmartDashboard.putData("AUTO_MODES", AUTO_MODE_CHOOSER);
-        
         CameraServer.getInstance().startAutomaticCapture();
 
-        //joystick.setCanDrive(true);
-        gamepad.setCanDrive(true);
+        joystick.setCanDrive(true);
+        //gamepad.setCanDrive(true);
         //joystick.setCanControlSolenoids(true);
         gamepad.setCanControlSolenoids(true);
         differentialDrive.setSafetyEnabled(true);
