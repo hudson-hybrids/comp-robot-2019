@@ -79,7 +79,7 @@ public class TankDriveController extends Controller {
         leftSpeed = getRawAxis(LEFT_STICK_AXIS) * leftSpeedMultiplier;
     }
 
-    private void controlSolenoidAnalog(DoubleSolenoid doubleSolenoid, int stickAxis) {
+    private void controlSolenoidAnalogStick(DoubleSolenoid doubleSolenoid, int stickAxis) {
         if (getRawAxis(stickAxis) >= 0.3) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
         }
@@ -90,14 +90,32 @@ public class TankDriveController extends Controller {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
         }
     }
-    private void controlSolenoidPOV(DoubleSolenoid doubleSolenoid) {
-        final int POV_UP = 1;
-        final int POV_DOWN = 2;
-        if (getPOV() == POV_UP) {
+    private void controlSolenoidTriggers(DoubleSolenoid doubleSolenoid, int triggerAxis, int shoulderButton) {
+        final float triggerPowerLevel = 0.15f;
+        boolean triggerPressed = getRawAxis(triggerAxis) >= triggerPowerLevel;
+        boolean shoulderPressed = getRawButton(shoulderButton);
+
+        if (triggerPressed && shoulderPressed) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+        }
+        else if (triggerPressed) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+        }
+        else if (shoulderPressed) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
         }
-        else if (getPOV() == POV_DOWN) {
+        else {
+            doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+        }
+    }
+    private void controlSolenoidPOV(DoubleSolenoid doubleSolenoid) {
+        final int POV_UP = 0;
+        final int POV_DOWN = 180;
+        if (getPOV() == POV_DOWN) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
+        else if (getPOV() == POV_UP) {
+            doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
         }
         else {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
@@ -122,9 +140,12 @@ public class TankDriveController extends Controller {
             drive.tankDrive(rightSpeed, leftSpeed);
         }
         else if (canControlSolenoids) {
-            controlSolenoidAnalog(panelAdjustSolenoid, LEFT_STICK_AXIS);
-            controlSolenoidAnalog(panelPushSolenoid, RIGHT_STICK_AXIS);
-            controlSolenoidPOV(cargoSolenoid);
+            //controlSolenoidAnalogStick(panelAdjustSolenoid, LEFT_TRIGGER_AXIS);
+            //controlSolenoidAnalogStick(panelPushSolenoid, RIGHT_TRIGGER_AXIS);
+            //controlSolenoidPOV(cargoSolenoid);
+            controlSolenoidTriggers(panelAdjustSolenoid, LEFT_TRIGGER_AXIS, LEFT_SHOULDER_BUTTON);
+            controlSolenoidTriggers(panelPushSolenoid, RIGHT_TRIGGER_AXIS, RIGHT_SHOULDER_BUTTON);
+            controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
         }
     }
 }
