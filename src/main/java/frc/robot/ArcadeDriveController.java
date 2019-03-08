@@ -102,6 +102,7 @@ public class ArcadeDriveController extends Controller {
             invertButtonPressed = true;
         }
         if (!getRawButton(CONTROL_INVERT_BUTTON) && invertButtonPressed) {
+            System.out.println("INVERTED: " + inverted);
             inverted = !inverted;
             invertButtonPressed = false;
         }
