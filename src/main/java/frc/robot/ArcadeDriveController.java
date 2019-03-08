@@ -9,11 +9,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import org.opencv.core.Mat;
-import edu.wpi.cscore.CvSource;
 
 import frc.robot.Controller;
-import frc.robot.Camera;
 
 public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
@@ -29,10 +26,6 @@ public class ArcadeDriveController extends Controller {
     private boolean control180Pressed = false;
     private boolean invertButtonPressed = false;
     private boolean inverted = false;
-
-    boolean frontCameraOn = true;
-    boolean backCameraOn = false;
-    boolean buttonChangePressed = false;
 
     ArcadeDriveController(
         final int ID, 
@@ -112,10 +105,6 @@ public class ArcadeDriveController extends Controller {
             inverted = !inverted;
             invertButtonPressed = false;
         }
-    }
-
-    void controlCameras(Camera frontCamera, Camera backCamera, Mat mat, CvSource cvSource) {
-
     }
 
     void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
