@@ -84,7 +84,7 @@ public class ArcadeDriveController extends Controller {
         }
         else {
             xSpeed = -getY() * xSpeedMultiplier;
-            zRotation = -getX() * zRotationMultiplier;
+            zRotation = getX() * zRotationMultiplier;
         }
     }
 
@@ -105,11 +105,13 @@ public class ArcadeDriveController extends Controller {
     }
 
     private void invertControls() {
+        System.out.println(inverted);
         if (getRawButton(CONTROL_INVERT_BUTTON)) {
             invertButtonPressed = true;
         }
         if (!getRawButton(CONTROL_INVERT_BUTTON) && invertButtonPressed) {
             inverted = !inverted;
+            invertButtonPressed = false;
         }
     }
 

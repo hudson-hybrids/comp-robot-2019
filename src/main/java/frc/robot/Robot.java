@@ -39,8 +39,8 @@ public class Robot extends TimedRobot {
     private SpeedControllerGroup rightGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
     private SpeedControllerGroup leftGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
 
-    private Camera frontCamera = new Camera(0);
-    private Camera backCamera = new Camera(1);
+    //private Camera frontCamera = new Camera(0);
+    //private Camera backCamera = new Camera(1);
 
     private Mat mat = new Mat();
     private CvSource cvSource = CameraServer.getInstance().putVideo("Switcher", Camera.WIDTH_RESOLUTION, Camera.HEIGHT_RESOLUTION);
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     private void teleopDrive() {
         gamepad.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
         joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
-        joystick.controlCameras(frontCamera, backCamera, mat, cvSource);
+        //joystick.controlCameras(frontCamera, backCamera, mat, cvSource);
 
         Timer.delay(0.005);
     }
@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 	//Runs at initialization
 	@Override
 	public void robotInit() {
-        frontCamera.setEnabled(true);
+        //frontCamera.setEnabled(true);
 
 		//Set autonomous modes (configurable via Smart Dashboard)
 		AUTO_MODE_CHOOSER.setDefaultOption(AUTO_MODE_TELEOP, AUTO_MODE_TELEOP);
@@ -78,6 +78,9 @@ public class Robot extends TimedRobot {
         //joystick.setCanControlSolenoids(true);
         gamepad.setCanControlSolenoids(true);
         differentialDrive.setSafetyEnabled(true);
+
+        CameraServer.getInstance().startAutomaticCapture(0);
+        CameraServer.getInstance().startAutomaticCapture(1);
 	}
 	
 	//Runs each cycle
