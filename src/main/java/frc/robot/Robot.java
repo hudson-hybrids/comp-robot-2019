@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid panelAdjustSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_FORWARD_ID, RobotMap.SOLENOID_PANEL_REVERSE_ID);
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
-    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2);
+    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2, 4, 3);
     private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 4, 2, 7, 8, 1, 3, 5, 1, 3, 2, 6, 5);
     private DifferentialDrive differentialDrive = new DifferentialDrive(leftGroup, rightGroup);
 
