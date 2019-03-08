@@ -16,10 +16,13 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import org.opencv.core.Mat;
+import edu.wpi.cscore.CvSource;
 
 import frc.robot.ArcadeDriveController;
 import frc.robot.TankDriveController;
 import frc.robot.RobotMap;
+import frc.robot.Camera;
 
 public class Robot extends TimedRobot {
     //Autonomous mode management
@@ -36,6 +39,12 @@ public class Robot extends TimedRobot {
     private SpeedControllerGroup rightGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
     private SpeedControllerGroup leftGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
 
+    private Camera frontCamera = new Camera(0);
+    private Camera backCamera = new Camera(1);
+
+    private Mat mat = new Mat();
+    private CvSource cvSource = CameraServer.getInstance().putVideo("Switcher", Camera.WIDTH_RESOLUTION, Camera.HEIGHT_RESOLUTION);
+
     private DoubleSolenoid panelAdjustSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_FORWARD_ID, RobotMap.SOLENOID_PANEL_REVERSE_ID);
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
@@ -49,6 +58,7 @@ public class Robot extends TimedRobot {
     private void teleopDrive() {
         gamepad.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
         joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
+        joystick.controlCameras(frontCamera, backCamera, mat, cvSource);
 
         Timer.delay(0.005);
     }
@@ -56,11 +66,12 @@ public class Robot extends TimedRobot {
 	//Runs at initialization
 	@Override
 	public void robotInit() {
+        frontCamera.setEnabled(true);
+
 		//Set autonomous modes (configurable via Smart Dashboard)
 		AUTO_MODE_CHOOSER.setDefaultOption(AUTO_MODE_TELEOP, AUTO_MODE_TELEOP);
 		AUTO_MODE_CHOOSER.addOption(AUTO_MODE_1, AUTO_MODE_1);
         SmartDashboard.putData("AUTO_MODES", AUTO_MODE_CHOOSER);
-        CameraServer.getInstance().startAutomaticCapture();
 
         joystick.setCanDrive(true);
         //gamepad.setCanDrive(true);
