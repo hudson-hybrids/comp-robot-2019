@@ -15,11 +15,8 @@ import frc.robot.Controller;
 public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
     final int MOTOR_SLOW_BUTTON;
-<<<<<<< HEAD
-=======
     final int CONTROL_180_BUTTON;
     final int CONTROL_INVERT_BUTTON;
->>>>>>> controllerFeatures
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
 
