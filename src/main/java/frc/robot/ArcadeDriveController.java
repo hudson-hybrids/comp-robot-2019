@@ -15,11 +15,20 @@ import frc.robot.Controller;
 public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
     final int MOTOR_SLOW_BUTTON;
+<<<<<<< HEAD
+=======
+    final int CONTROL_180_BUTTON;
+    final int CONTROL_INVERT_BUTTON;
+>>>>>>> controllerFeatures
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
 
     private double xSpeed;
     private double zRotation;
+
+    private boolean control180Pressed = false;
+    private boolean invertButtonPressed = false;
+    private boolean inverted = false;
 
     ArcadeDriveController(
         final int ID, 
@@ -30,7 +39,9 @@ public class ArcadeDriveController extends Controller {
         final int SOLENOID_CARGO_RAISE_BUTTON,
         final int SOLENOID_CARGO_LOWER_BUTTON,
         final int MOTOR_SPEED_BUTTON,
-        final int MOTOR_SLOW_BUTTON) {
+        final int MOTOR_SLOW_BUTTON,
+        final int CONTROL_180_BUTTON,
+        final int CONTROL_INVERT_BUTTON) {
 
         super(
             ID, 
@@ -42,6 +53,8 @@ public class ArcadeDriveController extends Controller {
             SOLENOID_CARGO_LOWER_BUTTON);
         this.MOTOR_SPEED_BUTTON = MOTOR_SPEED_BUTTON;
         this.MOTOR_SLOW_BUTTON = MOTOR_SLOW_BUTTON;
+        this.CONTROL_180_BUTTON = CONTROL_180_BUTTON;
+        this.CONTROL_INVERT_BUTTON = CONTROL_INVERT_BUTTON;
     }
 
     private void setSpeed() {
@@ -50,7 +63,7 @@ public class ArcadeDriveController extends Controller {
 
         if (getTrigger() && !getRawButton(MOTOR_SLOW_BUTTON)) {
             xSpeedMultiplier = 1.0;
-            zRotationMultiplier = 0.8;
+            zRotationMultiplier = 0.5;
         }
         else if (!getTrigger() && getRawButton(MOTOR_SLOW_BUTTON)) {
             xSpeedMultiplier = 0.4;
@@ -61,8 +74,14 @@ public class ArcadeDriveController extends Controller {
             zRotationMultiplier = 0.48;
         }
 
-        xSpeed = getY() * xSpeedMultiplier;
-        zRotation = getX() * zRotationMultiplier;
+        if (!inverted) {
+            xSpeed = getY() * xSpeedMultiplier;
+            zRotation = getX() * zRotationMultiplier;
+        }
+        else {
+            xSpeed = -getY() * xSpeedMultiplier;
+            zRotation = getX() * zRotationMultiplier;
+        }
     }
 
     void setCanDrive(boolean canDrive) {
@@ -70,6 +89,26 @@ public class ArcadeDriveController extends Controller {
     }
     void setCanControlSolenoids(boolean canControlSolenoids) {
         this.canControlSolenoids = canControlSolenoids;
+    }
+
+    private void drive180() {
+        if (getRawButton(CONTROL_180_BUTTON)) {
+            control180Pressed = true;
+        }
+        if (!getRawButton(CONTROL_180_BUTTON) && control180Pressed) {
+            //Rotate
+        }
+    }
+
+    private void invertControls() {
+        if (getRawButton(CONTROL_INVERT_BUTTON)) {
+            invertButtonPressed = true;
+        }
+        if (!getRawButton(CONTROL_INVERT_BUTTON) && invertButtonPressed) {
+            System.out.println("INVERTED: " + inverted);
+            inverted = !inverted;
+            invertButtonPressed = false;
+        }
     }
 
     void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
@@ -80,6 +119,8 @@ public class ArcadeDriveController extends Controller {
         }
         if (canDrive) {
             setSpeed();
+            drive180();
+            invertControls();
             drive.arcadeDrive(xSpeed, zRotation);
         }
     }

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import frc.robot.ArcadeDriveController;
@@ -39,7 +40,7 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid panelAdjustSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_FORWARD_ID, RobotMap.SOLENOID_PANEL_REVERSE_ID);
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
-    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2);
+    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2, 4, 3);
     private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 4, 2, 7, 8, 1, 3, 5, 1, 3, 2, 6, 5);
     private DifferentialDrive differentialDrive = new DifferentialDrive(leftGroup, rightGroup);
 
@@ -60,13 +61,15 @@ public class Robot extends TimedRobot {
 		AUTO_MODE_CHOOSER.setDefaultOption(AUTO_MODE_TELEOP, AUTO_MODE_TELEOP);
 		AUTO_MODE_CHOOSER.addOption(AUTO_MODE_1, AUTO_MODE_1);
         SmartDashboard.putData("AUTO_MODES", AUTO_MODE_CHOOSER);
-        CameraServer.getInstance().startAutomaticCapture();
 
         joystick.setCanDrive(true);
         //gamepad.setCanDrive(true);
         //joystick.setCanControlSolenoids(true);
         gamepad.setCanControlSolenoids(true);
         differentialDrive.setSafetyEnabled(true);
+
+        CameraServer.getInstance().startAutomaticCapture(0);
+        CameraServer.getInstance().startAutomaticCapture(1);
 	}
 	
 	//Runs each cycle
