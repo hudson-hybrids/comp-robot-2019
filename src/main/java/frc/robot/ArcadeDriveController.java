@@ -15,17 +15,16 @@ import frc.robot.Controller;
 public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
     final int MOTOR_SLOW_BUTTON;
-    final int CONTROL_180_BUTTON;
     final int CONTROL_INVERT_BUTTON;
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
 
     private double xSpeed;
     private double zRotation;
-
-    private boolean control180Pressed = false;
+    
     private boolean invertButtonPressed = false;
     private boolean inverted = false;
+    private boolean slowDriveLock = false;
 
     ArcadeDriveController(
         final int ID, 
@@ -37,7 +36,6 @@ public class ArcadeDriveController extends Controller {
         final int SOLENOID_CARGO_LOWER_BUTTON,
         final int MOTOR_SPEED_BUTTON,
         final int MOTOR_SLOW_BUTTON,
-        final int CONTROL_180_BUTTON,
         final int CONTROL_INVERT_BUTTON) {
 
         super(
@@ -50,7 +48,6 @@ public class ArcadeDriveController extends Controller {
             SOLENOID_CARGO_LOWER_BUTTON);
         this.MOTOR_SPEED_BUTTON = MOTOR_SPEED_BUTTON;
         this.MOTOR_SLOW_BUTTON = MOTOR_SLOW_BUTTON;
-        this.CONTROL_180_BUTTON = CONTROL_180_BUTTON;
         this.CONTROL_INVERT_BUTTON = CONTROL_INVERT_BUTTON;
     }
 
@@ -58,17 +55,23 @@ public class ArcadeDriveController extends Controller {
         double xSpeedMultiplier = 0.0;
         double zRotationMultiplier = 0.0;
 
-        if (getTrigger() && !getRawButton(MOTOR_SLOW_BUTTON)) {
-            xSpeedMultiplier = 1.0;
-            zRotationMultiplier = 0.5;
-        }
-        else if (!getTrigger() && getRawButton(MOTOR_SLOW_BUTTON)) {
+        if (slowDriveLock) {
             xSpeedMultiplier = 0.4;
             zRotationMultiplier = 0.32;
         }
         else {
-            xSpeedMultiplier = 0.6;
-            zRotationMultiplier = 0.48;
+            if (getTrigger() && !getRawButton(MOTOR_SLOW_BUTTON)) {
+                xSpeedMultiplier = 1.0;
+                zRotationMultiplier = 0.5;
+            }
+            else if (!getTrigger() && getRawButton(MOTOR_SLOW_BUTTON)) {
+                xSpeedMultiplier = 0.4;
+                zRotationMultiplier = 0.32;
+            }
+            else {
+                xSpeedMultiplier = 0.6;
+                zRotationMultiplier = 0.48;
+            }
         }
 
         if (!inverted) {
@@ -87,14 +90,8 @@ public class ArcadeDriveController extends Controller {
     void setCanControlSolenoids(boolean canControlSolenoids) {
         this.canControlSolenoids = canControlSolenoids;
     }
-
-    private void drive180() {
-        if (getRawButton(CONTROL_180_BUTTON)) {
-            control180Pressed = true;
-        }
-        if (!getRawButton(CONTROL_180_BUTTON) && control180Pressed) {
-            //Rotate
-        }
+    void setSlowDriveLock(boolean slowDriveLock) {
+        this.slowDriveLock = slowDriveLock;
     }
 
     private void invertControls() {
@@ -116,7 +113,6 @@ public class ArcadeDriveController extends Controller {
         }
         if (canDrive) {
             setSpeed();
-            drive180();
             invertControls();
             drive.arcadeDrive(xSpeed, zRotation);
         }
