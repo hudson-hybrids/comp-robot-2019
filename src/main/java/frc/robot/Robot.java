@@ -22,6 +22,8 @@ import frc.robot.TankDriveController;
 import frc.robot.RobotMap;
 
 public class Robot extends TimedRobot {
+    private final boolean DEMO = true;
+
     //Autonomous mode management
     private String currentAutoMode;
     private final SendableChooser<String> AUTO_MODE_CHOOSER = new SendableChooser<>();
@@ -47,8 +49,10 @@ public class Robot extends TimedRobot {
 
     //Drive code for autonomous and teleoperated
     private void teleopDrive() {
-        gamepad.controlSlowDriveLock();
-        joystick.setSlowDriveLock(gamepad.getSlowDriveLock());
+        if (DEMO) {
+            gamepad.controlSlowDriveLock();
+            joystick.setSlowDriveLock(gamepad.getSlowDriveLock());
+        }
         gamepad.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
         joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
 
@@ -63,11 +67,15 @@ public class Robot extends TimedRobot {
 		AUTO_MODE_CHOOSER.addOption(AUTO_MODE_1, AUTO_MODE_1);
         SmartDashboard.putData("AUTO_MODES", AUTO_MODE_CHOOSER);
 
-        joystick.setCanDrive(true);
-        //gamepad.setCanDrive(true);
-        joystick.setCanControlSolenoids(true);
-        //gamepad.setCanControlSolenoids(true);
-        joystick.setSlowDriveLock(gamepad.getSlowDriveLock());
+        if (DEMO) {
+            joystick.setCanDrive(true);
+            joystick.setCanControlSolenoids(true);
+            joystick.setSlowDriveLock(gamepad.getSlowDriveLock());
+        }
+        else {
+            joystick.setCanDrive(true);
+            gamepad.setCanControlSolenoids(true);
+        }
         differentialDrive.setSafetyEnabled(true);
 
         CameraServer.getInstance().startAutomaticCapture(0);

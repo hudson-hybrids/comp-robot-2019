@@ -133,14 +133,12 @@ public class TankDriveController extends Controller {
         this.canControlSolenoids = canControlSolenoids;
     }
     void controlSlowDriveLock() {
-        if (!canControlSolenoids && !canDrive) {
-            if (getRawButton(SLOW_DRIVE_LOCK_BUTTON)) {
-                slowDriveLockButtonPressed = true;
-            }
-            if (!getRawButton(SLOW_DRIVE_LOCK_BUTTON) && slowDriveLockButtonPressed) {
-                slowDriveLock = !slowDriveLock;
-                slowDriveLockButtonPressed = false;
-            }
+        if (getRawButton(SLOW_DRIVE_LOCK_BUTTON)) {
+            slowDriveLockButtonPressed = true;
+        }
+        if (!getRawButton(SLOW_DRIVE_LOCK_BUTTON) && slowDriveLockButtonPressed) {
+            slowDriveLock = !slowDriveLock;
+            slowDriveLockButtonPressed = false;
         }
     }
     boolean getSlowDriveLock() {

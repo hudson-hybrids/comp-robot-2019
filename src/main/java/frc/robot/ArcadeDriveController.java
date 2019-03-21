@@ -56,8 +56,14 @@ public class ArcadeDriveController extends Controller {
         double zRotationMultiplier = 0.0;
 
         if (slowDriveLock) {
-            xSpeedMultiplier = 0.4;
-            zRotationMultiplier = 0.32;
+            if (getRawButton(MOTOR_SLOW_BUTTON)) {
+                xSpeedMultiplier = 0.4;
+                zRotationMultiplier = 0.32;
+            }
+            else {
+                xSpeedMultiplier = 0.5;
+                zRotationMultiplier = 0.4;
+            }
         }
         else {
             if (getTrigger() && !getRawButton(MOTOR_SLOW_BUTTON)) {
