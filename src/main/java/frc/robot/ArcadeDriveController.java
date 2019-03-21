@@ -83,17 +83,6 @@ public class ArcadeDriveController extends Controller {
             zRotation = getX() * zRotationMultiplier;
         }
     }
-
-    void setCanDrive(boolean canDrive) {
-        this.canDrive = canDrive;
-    }
-    void setCanControlSolenoids(boolean canControlSolenoids) {
-        this.canControlSolenoids = canControlSolenoids;
-    }
-    void setSlowDriveLock(boolean slowDriveLock) {
-        this.slowDriveLock = slowDriveLock;
-    }
-
     private void invertControls() {
         if (getRawButton(CONTROL_INVERT_BUTTON)) {
             invertButtonPressed = true;
@@ -105,6 +94,15 @@ public class ArcadeDriveController extends Controller {
         }
     }
 
+    void setCanDrive(boolean canDrive) {
+        this.canDrive = canDrive;
+    }
+    void setCanControlSolenoids(boolean canControlSolenoids) {
+        this.canControlSolenoids = canControlSolenoids;
+    }
+    void setSlowDriveLock(boolean slowDriveLock) {
+        this.slowDriveLock = slowDriveLock;
+    }
     void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
         if (canControlSolenoids) {
             controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);

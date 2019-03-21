@@ -19,9 +19,12 @@ public class TankDriveController extends Controller {
     final int LEFT_TRIGGER_AXIS;
     final int RIGHT_SHOULDER_BUTTON;
     final int LEFT_SHOULDER_BUTTON;
+    final int SLOW_DRIVE_LOCK_BUTTON;
 
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
+    private boolean slowDriveLock = true;
+    private boolean slowDriveLockButtonPressed = false;
 
     double rightSpeed;
     double leftSpeed;
@@ -39,7 +42,8 @@ public class TankDriveController extends Controller {
         final int RIGHT_TRIGGER_AXIS,
         final int LEFT_TRIGGER_AXIS,
         final int RIGHT_SHOULDER_BUTTON,
-        final int LEFT_SHOULDER_BUTTON) {
+        final int LEFT_SHOULDER_BUTTON,
+        final int SLOW_DRIVE_LOCK_BUTTON) {
 
         super(
             ID, 
@@ -55,6 +59,7 @@ public class TankDriveController extends Controller {
         this.LEFT_TRIGGER_AXIS = LEFT_TRIGGER_AXIS;
         this.RIGHT_SHOULDER_BUTTON = RIGHT_SHOULDER_BUTTON;
         this.LEFT_SHOULDER_BUTTON = LEFT_SHOULDER_BUTTON;
+        this.SLOW_DRIVE_LOCK_BUTTON = SLOW_DRIVE_LOCK_BUTTON;
     }
 
     private void setSpeed() {
@@ -78,7 +83,6 @@ public class TankDriveController extends Controller {
         rightSpeed = getRawAxis(RIGHT_STICK_AXIS) * rightSpeedMultiplier;
         leftSpeed = getRawAxis(LEFT_STICK_AXIS) * leftSpeedMultiplier;
     }
-
     private void controlSolenoidAnalogStick(DoubleSolenoid doubleSolenoid, int stickAxis) {
         if (getRawAxis(stickAxis) >= 0.3) {
             doubleSolenoid.set(DoubleSolenoid.Value.kForward);
@@ -128,7 +132,20 @@ public class TankDriveController extends Controller {
     void setCanControlSolenoids(boolean canControlSolenoids) {
         this.canControlSolenoids = canControlSolenoids;
     }
-
+    void controlSlowDriveLock() {
+        if (!canControlSolenoids && !canDrive) {
+            if (getRawButton(SLOW_DRIVE_LOCK_BUTTON)) {
+                slowDriveLockButtonPressed = true;
+            }
+            if (!getRawButton(SLOW_DRIVE_LOCK_BUTTON) && slowDriveLockButtonPressed) {
+                slowDriveLock = !slowDriveLock;
+                slowDriveLockButtonPressed = false;
+            }
+        }
+    }
+    boolean getSlowDriveLock() {
+        return slowDriveLock;
+    }
     void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
         if (canDrive) {
             if (canControlSolenoids) {
