@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
             joystick.setSlowDriveLock(gamepad.getSlowDriveLock());
         }
         gamepad.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
-        joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid);
+        joystick.drive(differentialDrive, panelAdjustSolenoid, panelPushSolenoid, cargoSolenoid, DEMO);
 
         Timer.delay(0.005);
     }

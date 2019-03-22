@@ -109,11 +109,17 @@ public class ArcadeDriveController extends Controller {
     void setSlowDriveLock(boolean slowDriveLock) {
         this.slowDriveLock = slowDriveLock;
     }
-    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
+    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid, boolean DEMO) {
         if (canControlSolenoids) {
-            controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);
-            controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);
-            controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
+            if (DEMO) {
+                controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);
+                controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
+            }
+            else {
+                controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);
+                controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);
+                controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
+            }
         }
         if (canDrive) {
             setSpeed();
