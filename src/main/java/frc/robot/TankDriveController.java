@@ -96,13 +96,15 @@ public class TankDriveController extends Controller {
     }
     private void controlSolenoidTriggers(DoubleSolenoid doubleSolenoid, int triggerAxis, int shoulderButton) {
         final float triggerPowerLevel = 0.15f;
-        boolean triggerPressed = getRawAxis(triggerAxis) >= triggerPowerLevel;
+        //boolean triggerPressed = getRawAxis(triggerAxis) >= triggerPowerLevel;
+        boolean triggerPressed = getRawButton(triggerAxis);
         boolean shoulderPressed = getRawButton(shoulderButton);
 
         if (triggerPressed && shoulderPressed) {
             doubleSolenoid.set(DoubleSolenoid.Value.kOff);
         }
         else if (triggerPressed) {
+            System.out.println('x');
             doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
         }
         else if (shoulderPressed) {
@@ -158,8 +160,8 @@ public class TankDriveController extends Controller {
             //controlSolenoidAnalogStick(panelAdjustSolenoid, LEFT_TRIGGER_AXIS);
             //controlSolenoidAnalogStick(panelPushSolenoid, RIGHT_TRIGGER_AXIS);
             //controlSolenoidPOV(cargoSolenoid);
-            controlSolenoidTriggers(panelAdjustSolenoid, LEFT_TRIGGER_AXIS, LEFT_SHOULDER_BUTTON);
-            controlSolenoidTriggers(panelPushSolenoid, RIGHT_TRIGGER_AXIS, RIGHT_SHOULDER_BUTTON);
+            controlSolenoidTriggers(panelAdjustSolenoid, 7, LEFT_SHOULDER_BUTTON);
+            controlSolenoidTriggers(panelPushSolenoid, 8, RIGHT_SHOULDER_BUTTON);
             controlSolenoidDigital(cargoSolenoid, SOLENOID_CARGO_RAISE_BUTTON, SOLENOID_CARGO_LOWER_BUTTON);
         }
     }

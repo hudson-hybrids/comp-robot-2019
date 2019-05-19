@@ -9,6 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 
 import frc.robot.Controller;
 
@@ -16,6 +19,8 @@ public class ArcadeDriveController extends Controller {
     final int MOTOR_SPEED_BUTTON;
     final int MOTOR_SLOW_BUTTON;
     final int CONTROL_INVERT_BUTTON;
+    final int AUTO_ALIGN_CONTINUE_BUTTON;
+    final int AUTO_ALIGN_STOP_BUTTON;
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
 
@@ -25,6 +30,14 @@ public class ArcadeDriveController extends Controller {
     private boolean invertButtonPressed = false;
     private boolean inverted = false;
     private boolean slowDriveLock = false;
+    private boolean autoAlignMode = false;
+    private boolean autoAlignStartButtonPressed = false;
+    private boolean autoAlignStopButtonPressed = false;
+    private boolean autoAlignPaused = false;
+
+    private NetworkTableInstance tableInstance;
+    private NetworkTable table;
+    private Timer timer = new Timer();
 
     ArcadeDriveController(
         final int ID, 
@@ -36,7 +49,9 @@ public class ArcadeDriveController extends Controller {
         final int SOLENOID_CARGO_LOWER_BUTTON,
         final int MOTOR_SPEED_BUTTON,
         final int MOTOR_SLOW_BUTTON,
-        final int CONTROL_INVERT_BUTTON) {
+        final int CONTROL_INVERT_BUTTON,
+        final int AUTO_ALIGN_CONTINUE_BUTTON,
+        final int AUTO_ALIGN_STOP_BUTTON) {
 
         super(
             ID, 
@@ -49,6 +64,13 @@ public class ArcadeDriveController extends Controller {
         this.MOTOR_SPEED_BUTTON = MOTOR_SPEED_BUTTON;
         this.MOTOR_SLOW_BUTTON = MOTOR_SLOW_BUTTON;
         this.CONTROL_INVERT_BUTTON = CONTROL_INVERT_BUTTON;
+        this.AUTO_ALIGN_CONTINUE_BUTTON = AUTO_ALIGN_CONTINUE_BUTTON;
+        this.AUTO_ALIGN_STOP_BUTTON = AUTO_ALIGN_STOP_BUTTON;
+
+        tableInstance = NetworkTableInstance.getDefault();
+        tableInstance.startClient();
+        tableInstance.setServer("192.168.1.38");
+        table = tableInstance.getTable("VideoTable");
     }
 
     private void setSpeed() {
@@ -58,11 +80,11 @@ public class ArcadeDriveController extends Controller {
         if (slowDriveLock) {
             if (getRawButton(MOTOR_SLOW_BUTTON)) {
                 xSpeedMultiplier = 0.4;
-                zRotationMultiplier = 0.32;
+                zRotationMultiplier = 0.3;
             }
             else {
                 xSpeedMultiplier = 0.5;
-                zRotationMultiplier = 0.4;
+                zRotationMultiplier = 0.38;
             }
         }
         else {
@@ -82,11 +104,11 @@ public class ArcadeDriveController extends Controller {
 
         if (!inverted) {
             xSpeed = getY() * xSpeedMultiplier;
-            zRotation = getX() * zRotationMultiplier;
+            zRotation = getZ() * zRotationMultiplier;
         }
         else {
             xSpeed = -getY() * xSpeedMultiplier;
-            zRotation = getX() * zRotationMultiplier;
+            zRotation = getZ() * zRotationMultiplier;
         }
     }
     private void invertControls() {
@@ -97,6 +119,100 @@ public class ArcadeDriveController extends Controller {
             System.out.println("INVERTED: " + inverted);
             inverted = !inverted;
             invertButtonPressed = false;
+        }
+    }
+    /*
+    private void autoAlign(DifferentialDrive drive) {
+        if (getRawButton(AUTO_ALIGN_CONTINUE_BUTTON)) {
+            autoAlignStartButtonPressed = true;
+        }
+        if (!getRawButton(AUTO_ALIGN_CONTINUE_BUTTON) && autoAlignStartButtonPressed && !autoAlignMode) {
+            autoAlignMode = true;
+            autoAlignStartButtonPressed = false;
+        }
+
+        while (autoAlignMode) {
+            double hatchOffset = 0;
+            if (tableInstance.getEntry("centerOffset").exists()) {
+                hatchOffset = tableInstance.getEntry("centerOffset").getValue().getDouble();
+            }
+
+            drive.arcadeDrive(0.0, -hatchOffset * 0.2);
+            Timer.delay(1.0);
+            drive.arcadeDrive(-0.2, 0.0);
+            Timer.delay(1.0);
+            drive.arcadeDrive(0.0, hatchOffset * 0.2);
+            Timer.delay(1.0);
+            drive.arcadeDrive(0.2, 0.0);
+            Timer.delay(1.0);
+
+            boolean buttonResponse = false;
+            while (!buttonResponse) {
+                if (getRawButton(AUTO_ALIGN_STOP_BUTTON)) {
+                    autoAlignStopButtonPressed = true;
+                }
+                if (!getRawButton(AUTO_ALIGN_STOP_BUTTON) && autoAlignStopButtonPressed) {
+                    autoAlignMode = false;
+                    buttonResponse = true;
+                    autoAlignStopButtonPressed = false;
+                }
+
+                if (getRawButton(AUTO_ALIGN_CONTINUE_BUTTON)) {
+                    autoAlignStartButtonPressed = true;
+                }
+                if (!getRawButton(AUTO_ALIGN_CONTINUE_BUTTON) && autoAlignStartButtonPressed) {
+                    buttonResponse = true;
+                    autoAlignStartButtonPressed = false;
+                }
+            }
+        }
+    }
+    */
+    private void autoAlign(DifferentialDrive drive) {
+        double hatchOffset = 0.0;
+        
+        if (getRawButton(AUTO_ALIGN_CONTINUE_BUTTON)) {
+            autoAlignStartButtonPressed = true;
+        }
+        if (!getRawButton(AUTO_ALIGN_CONTINUE_BUTTON) && autoAlignStartButtonPressed) {
+            if (!autoAlignMode || autoAlignPaused) {
+                if (tableInstance.getEntry("centerOffset").exists()) {
+                    hatchOffset = tableInstance.getEntry("centerOffset").getValue().getDouble();
+                }
+
+                autoAlignMode = true;
+                timer.reset();
+                timer.start();
+                autoAlignPaused = false;
+                autoAlignStartButtonPressed = false;
+            }
+        }
+
+        if (getRawButton(AUTO_ALIGN_STOP_BUTTON)) {
+            autoAlignStopButtonPressed = true;
+        }
+        if (!getRawButton(AUTO_ALIGN_STOP_BUTTON) && autoAlignStopButtonPressed) {
+            autoAlignMode = false;
+            autoAlignPaused = false;
+            autoAlignStopButtonPressed = false;
+        }
+
+        if (!autoAlignPaused) {
+            if (timer.get() < 1.0) {
+                drive.arcadeDrive(0.0, -hatchOffset * 0.2);
+            }
+            else if (timer.get() < 2.0) {
+                drive.arcadeDrive(-0.2, 0.0);
+            }
+            else if (timer.get() < 3.0) {
+                drive.arcadeDrive(0.0, hatchOffset * 0.2);
+            }
+            else if (timer.get() < 4.0) {
+                drive.arcadeDrive(0.2, 0.0);
+            }
+            else if (timer.get() >= 4.0) {
+                autoAlignPaused = true;
+            }
         }
     }
 
@@ -125,6 +241,8 @@ public class ArcadeDriveController extends Controller {
             setSpeed();
             invertControls();
             drive.arcadeDrive(xSpeed, zRotation);
+
+            //autoAlign(drive);
         }
     }
 }

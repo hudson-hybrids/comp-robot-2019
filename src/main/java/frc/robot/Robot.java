@@ -22,7 +22,7 @@ import frc.robot.TankDriveController;
 import frc.robot.RobotMap;
 
 public class Robot extends TimedRobot {
-    private final boolean DEMO = true;
+    private final boolean DEMO = false;
 
     //Autonomous mode management
     private String currentAutoMode;
@@ -41,8 +41,8 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid panelAdjustSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_FORWARD_ID, RobotMap.SOLENOID_PANEL_REVERSE_ID);
     private DoubleSolenoid panelPushSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_PANEL_PUSH_ID, RobotMap.SOLENOID_PANEL_UNPUSH_ID);
     private DoubleSolenoid cargoSolenoid = new DoubleSolenoid(RobotMap.SOLENOID_CARGO_RAISE_ID, RobotMap.SOLENOID_CARGO_LOWER_ID);
-    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2, 12);
-    private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 4, 2, 7, 8, 1, 3, 5, 1, 3, 2, 6, 5, 4);
+    private ArcadeDriveController joystick = new ArcadeDriveController(RobotMap.JOYSTICK_ID, 3, 5, 4, 6, 7, 8, 1, 2, 12, 9, 10);
+    private TankDriveController gamepad = new TankDriveController(RobotMap.GAMEPAD_ID, 4, 2, 7, 8, 1, 2, 5, 1, 3, 2, 6, 5, 4);
     private DifferentialDrive differentialDrive = new DifferentialDrive(leftGroup, rightGroup);
 
     private Timer timer = new Timer();
@@ -78,9 +78,10 @@ public class Robot extends TimedRobot {
         }
         differentialDrive.setSafetyEnabled(true);
 
-        CameraServer.getInstance().startAutomaticCapture(0);
-        CameraServer.getInstance().startAutomaticCapture(1);
-	}
+        CameraServer cameraServer = CameraServer.getInstance();
+        cameraServer.startAutomaticCapture(0);
+        cameraServer.startAutomaticCapture(1);
+    }
 	
 	//Runs each cycle
 	@Override
