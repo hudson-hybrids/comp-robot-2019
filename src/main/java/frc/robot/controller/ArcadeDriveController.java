@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.controller;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -13,14 +13,14 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 
-import frc.robot.Controller;
+import frc.robot.controller.Controller;
 
 public class ArcadeDriveController extends Controller {
-    final int MOTOR_SPEED_BUTTON;
-    final int MOTOR_SLOW_BUTTON;
-    final int CONTROL_INVERT_BUTTON;
-    final int AUTO_ALIGN_CONTINUE_BUTTON;
-    final int AUTO_ALIGN_STOP_BUTTON;
+    private final int MOTOR_SPEED_BUTTON;
+    private final int MOTOR_SLOW_BUTTON;
+    private final int CONTROL_INVERT_BUTTON;
+    private final int AUTO_ALIGN_CONTINUE_BUTTON;
+    private final int AUTO_ALIGN_STOP_BUTTON;
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
 
@@ -39,7 +39,7 @@ public class ArcadeDriveController extends Controller {
     private NetworkTable table;
     private Timer timer = new Timer();
 
-    ArcadeDriveController(
+    public ArcadeDriveController(
         final int ID, 
         final int SOLENOID_PANEL_FORWARD_BUTTON, 
         final int SOLENOID_PANEL_REVERSE_BUTTON, 
@@ -216,16 +216,16 @@ public class ArcadeDriveController extends Controller {
         }
     }
 
-    void setCanDrive(boolean canDrive) {
+    public void setCanDrive(boolean canDrive) {
         this.canDrive = canDrive;
     }
-    void setCanControlSolenoids(boolean canControlSolenoids) {
+    public void setCanControlSolenoids(boolean canControlSolenoids) {
         this.canControlSolenoids = canControlSolenoids;
     }
-    void setSlowDriveLock(boolean slowDriveLock) {
+    public void setSlowDriveLock(boolean slowDriveLock) {
         this.slowDriveLock = slowDriveLock;
     }
-    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid, boolean DEMO) {
+    public void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid, boolean DEMO) {
         if (canControlSolenoids) {
             if (DEMO) {
                 controlSolenoidDigital(panelPushSolenoid, SOLENOID_PANEL_PUSH_BUTTON, SOLENOID_PANEL_UNPUSH_BUTTON);

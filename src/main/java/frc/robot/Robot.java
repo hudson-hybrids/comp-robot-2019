@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import frc.robot.ArcadeDriveController;
-import frc.robot.TankDriveController;
+import frc.robot.controller.ArcadeDriveController;
+import frc.robot.controller.TankDriveController;
 import frc.robot.RobotMap;
 
 public class Robot extends TimedRobot {

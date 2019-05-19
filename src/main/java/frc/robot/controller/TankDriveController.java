@@ -5,31 +5,31 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.controller;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import frc.robot.Controller;
+import frc.robot.controller.Controller;
 
 public class TankDriveController extends Controller {
-    final int RIGHT_STICK_AXIS;
-    final int LEFT_STICK_AXIS;
-    final int RIGHT_TRIGGER_AXIS;
-    final int LEFT_TRIGGER_AXIS;
-    final int RIGHT_SHOULDER_BUTTON;
-    final int LEFT_SHOULDER_BUTTON;
-    final int SLOW_DRIVE_LOCK_BUTTON;
+    private final int RIGHT_STICK_AXIS;
+    private final int LEFT_STICK_AXIS;
+    private final int RIGHT_TRIGGER_AXIS;
+    private final int LEFT_TRIGGER_AXIS;
+    private final int RIGHT_SHOULDER_BUTTON;
+    private final int LEFT_SHOULDER_BUTTON;
+    private final int SLOW_DRIVE_LOCK_BUTTON;
 
     private boolean canDrive = false;
     private boolean canControlSolenoids = false;
     private boolean slowDriveLock = true;
     private boolean slowDriveLockButtonPressed = false;
 
-    double rightSpeed;
-    double leftSpeed;
+    private double rightSpeed;
+    private double leftSpeed;
 
-    TankDriveController(
+    public TankDriveController(
         final int ID, 
         final int SOLENOID_PANEL_FORWARD_BUTTON, 
         final int SOLENOID_PANEL_REVERSE_BUTTON, 
@@ -128,13 +128,13 @@ public class TankDriveController extends Controller {
         }
     }
 
-    void setCanDrive(boolean canDrive) {
+    public void setCanDrive(boolean canDrive) {
         this.canDrive = canDrive;
     }
-    void setCanControlSolenoids(boolean canControlSolenoids) {
+    public void setCanControlSolenoids(boolean canControlSolenoids) {
         this.canControlSolenoids = canControlSolenoids;
     }
-    void controlSlowDriveLock() {
+    public void controlSlowDriveLock() {
         if (getRawButton(SLOW_DRIVE_LOCK_BUTTON)) {
             slowDriveLockButtonPressed = true;
         }
@@ -143,10 +143,10 @@ public class TankDriveController extends Controller {
             slowDriveLockButtonPressed = false;
         }
     }
-    boolean getSlowDriveLock() {
+    public boolean getSlowDriveLock() {
         return slowDriveLock;
     }
-    void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
+    public void drive(DifferentialDrive drive, DoubleSolenoid panelAdjustSolenoid, DoubleSolenoid panelPushSolenoid, DoubleSolenoid cargoSolenoid) {
         if (canDrive) {
             if (canControlSolenoids) {
                 controlSolenoidDigital(panelAdjustSolenoid, SOLENOID_PANEL_FORWARD_BUTTON, SOLENOID_PANEL_REVERSE_BUTTON);
